@@ -6,7 +6,7 @@ public class Bet
 	private BetColor color;
 	private int points;
 	
-	public Bet(User user, BetColor color, int points)
+	public Bet(User user, int points, BetColor color)
 	{
 		this.user = user;
 		this.color = color;
