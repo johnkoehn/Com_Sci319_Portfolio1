@@ -60,6 +60,8 @@ public class BetGUI extends JFrame {
 	private int greenPoints;
 	private int blackPoints;
 	
+	private JProgressBar progressBar;
+	
 	//for testing
 	User user = new User(10000, username, "poop");
 	
@@ -224,8 +226,9 @@ public class BetGUI extends JFrame {
 		lblBlackPoints.setBounds(208, 103, 89, 18);
 		contentPane.add(lblBlackPoints);
 		
-		JProgressBar progressBar = new JProgressBar();
+		progressBar = new JProgressBar();
 		progressBar.setBounds(10, 264, 164, 14);
+		progressBar.setValue(90);
 		contentPane.add(progressBar);
 		
 		JLabel lblTimeTillBet = new JLabel("Time Till bet");
