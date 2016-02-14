@@ -44,4 +44,9 @@ public class User
 	{
 		return username;
 	}
+	
+	public int getPoints()
+	{
+		return points;
+	}
 }

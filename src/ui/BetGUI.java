@@ -6,21 +6,29 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.NumberFormatter;
 
 import core.BetColor;
+import core.BetTracker;
+import core.User;
 
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.text.NumberFormat;
 
 import javax.swing.JFormattedTextField;
 import javax.swing.JButton;
+import javax.swing.JDialog;
+
 import java.awt.Color;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollBar;
@@ -31,6 +39,7 @@ public class BetGUI extends JFrame {
 	private JPanel contentPane;
 	private JTextField chatField;
 	private String username = "Anus Potato";
+	private BetTracker betTracker;
 	
 	private BetColor betColor = BetColor.NONE;
 	private ActionListener colorButtonsListener;
@@ -40,6 +49,19 @@ public class BetGUI extends JFrame {
 	private JButton btnBlack;
 	
 	private JButton btnBet;
+	private JFormattedTextField betField;
+	
+	private JLabel lblUsernamePoints;
+	private JLabel lblRedPoints;
+	private JLabel lblGreenPoints;
+	private JLabel lblBlackPoints;
+	//TODO, these need values based of server
+	private int redPoints;  
+	private int greenPoints;
+	private int blackPoints;
+	
+	//for testing
+	User user = new User(10000, username, "poop");
 	
 	/**
 	 * Launch the application.
@@ -66,6 +88,8 @@ public class BetGUI extends JFrame {
 	 */
 	public BetGUI() 
 	{
+		betTracker = new BetTracker();
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 592, 412);
 		contentPane = new JPanel();
@@ -135,14 +159,24 @@ public class BetGUI extends JFrame {
 		lblChat.setBounds(360, 303, 46, 20);
 		contentPane.add(lblChat);
 		
-		JLabel lblUsernamePoints = new JLabel("Username:     Points");
+		lblUsernamePoints = new JLabel(user.getUsername() + ": " + user.getPoints());
 		lblUsernamePoints.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		lblUsernamePoints.setBounds(10, 11, 134, 20);
 		contentPane.add(lblUsernamePoints);
 		
-		JFormattedTextField formattedTextField = new JFormattedTextField();
-		formattedTextField.setBounds(68, 303, 106, 20);
-		contentPane.add(formattedTextField);
+		//set up a formatter for integers only
+	    NumberFormat format = NumberFormat.getInstance();
+	    NumberFormatter formatter = new NumberFormatter(format);
+	    formatter.setValueClass(Integer.class);
+	    formatter.setMinimum(0);
+	    formatter.setMaximum(Integer.MAX_VALUE);
+	    //value committed on each keystroke instead of loss on focus
+	    formatter.setCommitsOnValidEdit(true);
+		
+		//allow the bet field to only accept integers
+		betField = new JFormattedTextField(formatter);		
+		betField.setBounds(68, 303, 106, 20);
+		contentPane.add(betField);
 		
 		btnBet = new JButton("Bet");
 		btnBet.setFont(new Font("Tahoma", Font.BOLD, 14));
@@ -178,17 +212,17 @@ public class BetGUI extends JFrame {
 		lblClickAColor.setBounds(10, 42, 175, 20);
 		contentPane.add(lblClickAColor);
 		
-		JLabel lblRedPointBet = new JLabel("Red Point bet");
-		lblRedPointBet.setBounds(10, 103, 89, 20);
-		contentPane.add(lblRedPointBet);
+		lblRedPoints = new JLabel("" + redPoints);
+		lblRedPoints.setBounds(10, 103, 89, 20);
+		contentPane.add(lblRedPoints);
 		
-		JLabel lblNewLabel = new JLabel("Green Points bet");
-		lblNewLabel.setBounds(109, 103, 89, 20);
-		contentPane.add(lblNewLabel);
+		lblGreenPoints = new JLabel("" + greenPoints);
+		lblGreenPoints.setBounds(109, 103, 89, 20);
+		contentPane.add(lblGreenPoints);
 		
-		JLabel lblNewLabel_1 = new JLabel("Black Points bet");
-		lblNewLabel_1.setBounds(208, 103, 89, 18);
-		contentPane.add(lblNewLabel_1);
+		lblBlackPoints = new JLabel("" + blackPoints);
+		lblBlackPoints.setBounds(208, 103, 89, 18);
+		contentPane.add(lblBlackPoints);
 		
 		JProgressBar progressBar = new JProgressBar();
 		progressBar.setBounds(10, 264, 164, 14);
@@ -205,6 +239,7 @@ public class BetGUI extends JFrame {
 		
 		//create colorButtons Action Listener and add them
 		initColorButtonListener();
+		addBetActionListener();
 	}
 	
 	private void initColorButtonListener()
@@ -243,5 +278,80 @@ public class BetGUI extends JFrame {
 		btnRed.addActionListener(colorButtonsListener);
 		btnGreen.addActionListener(colorButtonsListener);
 		btnBlack.addActionListener(colorButtonsListener);
+	}
+	
+	private void addBetActionListener()
+	{
+		btnBet.addActionListener(new ActionListener()
+		{
+			
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				//check that the user entered a value
+				int points = 0;
+				try
+				{
+					points = Integer.parseInt(betField.getText().replace(",", ""));
+				}
+				catch (NumberFormatException x)
+				{
+					JOptionPane.showMessageDialog(new JFrame(), "Enter a number to bet!");
+					return;
+				}
+				//check that a color to bet on is selected
+				if(betColor == BetColor.NONE)
+				{
+					JOptionPane.showMessageDialog(new JFrame(), "Please select a color to bet on!!!");
+					return;
+				}
+				
+				//make sure the user has enough point to place the bet
+				if((user.getPoints() - points) < 0)
+				{
+					JOptionPane.showMessageDialog(new JFrame(), "Not enough points available to bet, you only have " + user.getPoints() + " points");
+					return;
+				}
+				
+				//bet can be placed, place the bet
+				user.subtractPoints(points);
+				betTracker.addBet(user, points, betColor);
+				
+				//update labels
+				updateUserLabel();
+				updatePointLabels(points);
+				
+				revalidate();
+			}
+		});
+	}
+	
+	
+	private void updatePointLabels(int points)
+	{
+		switch(betColor)
+		{
+		case RED:
+			redPoints += points;
+			lblRedPoints.setText("" + redPoints);
+			break;
+		case GREEN:
+			greenPoints += points;
+			lblGreenPoints.setText("" + greenPoints);
+			break;
+		case BLACK:
+			blackPoints += points;
+			lblBlackPoints.setText("" + blackPoints);
+			break;
+		case NONE:
+			//should never happen
+			break;
+		}
+	}
+	
+	
+	private void updateUserLabel()
+	{
+		lblUsernamePoints.setText(user.getUsername() + ": " + user.getPoints());
 	}
 }
