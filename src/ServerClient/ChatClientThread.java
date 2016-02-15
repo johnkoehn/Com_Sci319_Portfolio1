@@ -1,6 +1,7 @@
 package ServerClient;
 
 import java.net.*;
+import java.util.Scanner;
 import java.io.*;
 
 public class ChatClientThread extends Thread
@@ -47,7 +48,36 @@ public class ChatClientThread extends Thread
 		{
 			try
 			{
-				client.handle(streamIn.readUTF());
+				String msg = streamIn.readUTF();
+				Boolean flag = false;
+				String color = null;
+				String amt = null;
+				Scanner parser = new Scanner(msg);
+				parser.useDelimiter("#");
+				while(parser.hasNext())
+				{
+					String sub = parser.next();
+					if(sub.equals("Chat"))
+					{
+						msg = parser.next();
+						flag = true;
+					}
+					else
+					{
+						//equals Bet
+						color = parser.next();
+						amt = parser.next();
+					}
+				}
+				
+				if(flag)
+				{
+					client.handleChat(msg);
+				}
+				else
+				{
+					client.handleBet(color, amt);
+				}
 			} catch (IOException ioe)
 			{
 				System.out.println("Listening error: " + ioe.getMessage());

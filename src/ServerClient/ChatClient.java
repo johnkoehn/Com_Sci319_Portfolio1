@@ -62,9 +62,15 @@ public class ChatClient implements Runnable
 		}
 	}
 
-	public void handle(String msg)
+	public void handleChat(String msg)
 	{
 		frame.sendMessage(msg);
+	}
+	
+	public synchronized void handleBet(String color, String amt)
+	{
+		// TODO Auto-generated method stub
+		
 	}
 
 	public void start() throws IOException
@@ -120,4 +126,6 @@ public class ChatClient implements Runnable
 			}
 		});
 	}
+
+	
 }

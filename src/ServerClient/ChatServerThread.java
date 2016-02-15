@@ -1,6 +1,9 @@
 package ServerClient;
 
 import java.net.*;
+
+import core.BetColor;
+
 import java.io.*;
 
 public class ChatServerThread extends Thread
@@ -19,7 +22,7 @@ public class ChatServerThread extends Thread
 		ID = socket.getPort();
 	}
 
-	public void send(String msg)
+	public void sendMessage(String msg)
 	{
 		try
 		{
@@ -32,6 +35,7 @@ public class ChatServerThread extends Thread
 			stop();
 		}
 	}
+	
 
 	public int getID()
 	{
@@ -45,7 +49,7 @@ public class ChatServerThread extends Thread
 		{
 			try
 			{
-				server.handle(ID, streamIn.readUTF());
+				server.handle(streamIn.readUTF());
 			} catch (IOException ioe)
 			{
 				System.out.println(ID + " ERROR reading: " + ioe.getMessage());
