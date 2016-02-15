@@ -15,6 +15,7 @@ import core.User;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingWorker;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
@@ -24,6 +25,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.text.NumberFormat;
+import java.util.Random;
 
 import javax.swing.JFormattedTextField;
 import javax.swing.JButton;
@@ -42,6 +44,7 @@ public class BetGUI extends JFrame {
 	private BetTracker betTracker;
 	
 	private BetColor betColor = BetColor.NONE;
+	private BetColor gambleColor = BetColor.GREEN;
 	private ActionListener colorButtonsListener;
 	
 	private JButton btnRed;
@@ -61,9 +64,15 @@ public class BetGUI extends JFrame {
 	private int blackPoints;
 	
 	private JProgressBar progressBar;
+	private JLabel lblPoints;
+	private JLabel lblTime;
+	
+	private int cyclesSinceGreen = 0;
+	private JPanel panel;
+	private Color red = new Color(165, 42, 42);
 	
 	//for testing
-	User user = new User(10000, username, "poop");
+	User user = new User(10000, username);
 	
 	/**
 	 * Launch the application.
@@ -85,6 +94,114 @@ public class BetGUI extends JFrame {
 		});
 	}
 
+	
+	/**
+	 * Subclass for progress bar process
+	 *
+	 */
+    class Task extends SwingWorker<Void, Void> 
+    {
+        /*
+         * Main task. Executed in background thread.
+         */
+        @Override
+        public Void doInBackground() 
+        {
+        	while(true)
+        	{
+        		int time = 10;
+                int progress = 0;
+                progressBar.setValue(100);
+                //Initialize progress property.
+                setProgress(0);
+                while (progress < 100) 
+                {
+                    //Sleep for up to one second.
+                    try 
+                    {
+                        Thread.sleep(100);
+                    } catch (InterruptedException ignore) {}
+                   
+                    progress += 1;
+                    progressBar.setValue(100 - progress);
+                    lblTime.setText("" + (int)(time - progress*.1));
+                    revalidate();
+                }
+                
+                //time is up to place bets, choose winning color and deal with bets
+                gamble();
+        	}
+        }
+
+    	private void gamble()
+    	{
+    		Random random = new Random();
+    		int value = random.nextInt(44 - 30 + 1) + 30;
+    		
+    		//start displaying the colors
+    		for(int i=0; i < value; i++)
+    		{
+    			if(gambleColor == BetColor.RED && cyclesSinceGreen >= 14)
+    			{
+    				//next color is green
+    				gambleColor = BetColor.GREEN;
+    				panel.setBackground(Color.GREEN);
+    				cyclesSinceGreen = 0;
+    			}
+    			else if(gambleColor == BetColor.RED || gambleColor == BetColor.GREEN)
+    			{
+    				//next color is Black
+    				gambleColor = BetColor.BLACK;
+    				panel.setBackground(Color.BLACK);
+    				cyclesSinceGreen += 1;
+    			}
+    			else
+    			{
+    				//next color is red
+    				gambleColor = BetColor.RED;
+    				panel.setBackground(red);
+    				cyclesSinceGreen += 1;
+    			}
+    			
+    			revalidate();
+    			
+                try 
+                {
+                    Thread.sleep(100);
+                } catch (InterruptedException ignore) {}
+    		}
+    		
+    		//final color has been chosen, process the bets
+    		processBets();
+    	}
+        
+    	private void processBets()
+    	{
+    		betTracker.processBets(gambleColor);
+    		
+    		//clear labels
+    		blackPoints = 0;
+    		greenPoints = 0;
+    		redPoints = 0;
+    		lblGreenPoints.setText("0");
+    		lblRedPoints.setText("0");
+    		lblBlackPoints.setText("0");
+    		
+    		//update user points 
+    		updateUserLabel();
+    		revalidate();
+    		
+    	}
+    	
+        /*
+         * Executed in event dispatching thread
+         */
+        @Override
+        public void done() 
+        {
+        }
+    }
+	
 	/**
 	 * Create the frame.
 	 */
@@ -186,7 +303,7 @@ public class BetGUI extends JFrame {
 		btnBet.setBounds(184, 302, 89, 23);
 		contentPane.add(btnBet);
 		
-		JLabel lblPoints = new JLabel("Points:");
+		lblPoints = new JLabel("Points:");
 		lblPoints.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		lblPoints.setBounds(10, 302, 57, 18);
 		contentPane.add(lblPoints);
@@ -231,11 +348,11 @@ public class BetGUI extends JFrame {
 		progressBar.setValue(90);
 		contentPane.add(progressBar);
 		
-		JLabel lblTimeTillBet = new JLabel("Time Till bet");
-		lblTimeTillBet.setBounds(184, 264, 70, 18);
-		contentPane.add(lblTimeTillBet);
+		lblTime = new JLabel("30");
+		lblTime.setBounds(184, 264, 70, 18);
+		contentPane.add(lblTime);
 		
-		JPanel panel = new JPanel();
+		panel = new JPanel();
 		panel.setBackground(Color.GREEN);
 		panel.setBounds(10, 147, 89, 81);
 		contentPane.add(panel);
@@ -243,6 +360,9 @@ public class BetGUI extends JFrame {
 		//create colorButtons Action Listener and add them
 		initColorButtonListener();
 		addBetActionListener();
+		
+		Task task = new Task();
+		task.execute();
 	}
 	
 	private void initColorButtonListener()
@@ -351,7 +471,6 @@ public class BetGUI extends JFrame {
 			break;
 		}
 	}
-	
 	
 	private void updateUserLabel()
 	{

@@ -18,7 +18,7 @@ public class BetTracker
 	
 	public void processBets(BetColor winningColor)
 	{
-		for(int i = 0; i < bets.size(); i++)
+		for(int i = bets.size(); i > 0; i--)
 		{
 			bets.pop().process(winningColor);
 		}

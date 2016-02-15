@@ -4,13 +4,11 @@ public class User
 {
 	private int points;
 	private String username;
-	private String password;
 	
-	public User(int points, String username, String password)
+	public User(int points, String username)
 	{
 		this.points = points;
 		this.username = username;
-		this.password = password;
 		
 	}
 	
@@ -32,12 +30,7 @@ public class User
 	
 	public String printUserInfo()
 	{
-		return username + "," + password + "," + Integer.toString(points);
-	}
-	
-	public String getPassowrd()
-	{
-		return password;
+		return username + "," + Integer.toString(points);
 	}
 	
 	public String getUsername()
