@@ -50,8 +50,7 @@ public class ChatClient implements Runnable
 		{
 			try
 			{
-				while(!frame.newMessage()){}
-				
+				//while(!frame.newMessage()){}
 				//we got a new message, notify the server and send the message
 				streamOut.writeUTF(frame.getMessage());
 				streamOut.flush();

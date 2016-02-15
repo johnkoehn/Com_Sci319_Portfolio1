@@ -80,7 +80,7 @@ public class BetGUI extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) 
+/*	public static void main(String[] args) 
 	{
 		EventQueue.invokeLater(new Runnable() 
 		{
@@ -95,7 +95,7 @@ public class BetGUI extends JFrame {
 				}
 			}
 		});
-	}
+	}*/
 
 	
 	/**
@@ -503,13 +503,19 @@ public class BetGUI extends JFrame {
 		revalidate();
 	}
 	
-	public boolean newMessage()
+	public synchronized String getMessage()
 	{
-		return newChatInput;
-	}
-	
-	public String getMessage()
-	{
+		while(!newChatInput)
+		{
+			try
+			{
+				Thread.sleep(1);
+			} catch (InterruptedException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		newChatInput = false;
 		return previousChatMessage;
 	}
