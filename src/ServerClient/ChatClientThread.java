@@ -49,7 +49,6 @@ public class ChatClientThread extends Thread
 			try
 			{
 				client.handle(streamIn.readUTF());
-				System.out.println("poop");
 			} catch (IOException ioe)
 			{
 				System.out.println("Listening error: " + ioe.getMessage());
