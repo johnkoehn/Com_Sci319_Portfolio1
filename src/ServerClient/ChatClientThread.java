@@ -5,14 +5,15 @@ import java.io.*;
 
 public class ChatClientThread extends Thread
 {
-	private Socket socket = null;
-	private ChatClient client = null;
-	private DataInputStream streamIn = null;
+	private Socket socket;
+	private ChatClient client;
+	private DataInputStream streamIn;
 
-	public ChatClientThread(ChatClient _client, Socket _socket)
+	public ChatClientThread(ChatClient client, Socket socket)
 	{
-		client = _client;
-		socket = _socket;
+		this.client = client;
+		this.socket = socket;
+		
 		open();
 		start();
 	}
@@ -48,6 +49,7 @@ public class ChatClientThread extends Thread
 			try
 			{
 				client.handle(streamIn.readUTF());
+				System.out.println("poop");
 			} catch (IOException ioe)
 			{
 				System.out.println("Listening error: " + ioe.getMessage());
