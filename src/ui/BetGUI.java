@@ -67,6 +67,8 @@ public class BetGUI extends JFrame {
 	private JLabel lblPoints;
 	private JLabel lblTime;
 	
+	private boolean betting = true;
+	
 	private int cyclesSinceGreen = 0;
 	private JPanel panel;
 	private Color red = new Color(165, 42, 42);
@@ -109,6 +111,7 @@ public class BetGUI extends JFrame {
         {
         	while(true)
         	{
+        		betting = true;
         		int time = 10;
                 int progress = 0;
                 progressBar.setValue(100);
@@ -129,6 +132,7 @@ public class BetGUI extends JFrame {
                 }
                 
                 //time is up to place bets, choose winning color and deal with bets
+                betting = false;
                 gamble();
         	}
         }
@@ -167,7 +171,7 @@ public class BetGUI extends JFrame {
     			
                 try 
                 {
-                    Thread.sleep(100);
+                    Thread.sleep(100 + i*10);
                 } catch (InterruptedException ignore) {}
     		}
     		
@@ -309,7 +313,7 @@ public class BetGUI extends JFrame {
 		contentPane.add(lblPoints);
 		
 		btnRed = new JButton("");
-		btnRed.setBackground(new Color(165, 42, 42));
+		btnRed.setBackground(red);
 		btnRed.setForeground(Color.GRAY);
 		btnRed.setBounds(10, 69, 89, 23);
 		contentPane.add(btnRed);
@@ -377,7 +381,7 @@ public class BetGUI extends JFrame {
 				
 				if(object == btnRed)
 				{
-					btnBet.setBackground(new Color(165, 42, 42));
+					btnBet.setBackground(red);
 					betColor = BetColor.RED;
 				}
 				else if(object == btnGreen)
@@ -411,6 +415,11 @@ public class BetGUI extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
+				if(betting == false)
+				{
+					return;
+				}
+				
 				//check that the user entered a value
 				int points = 0;
 				try
