@@ -11,6 +11,7 @@ import javax.swing.text.NumberFormatter;
 import core.BetColor;
 import core.BetTracker;
 import core.User;
+import core.Utility;
 
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -73,8 +74,10 @@ public class BetGUI extends JFrame {
 	private JPanel panel;
 	private Color red = new Color(165, 42, 42);
 	
-	private boolean newChatInput = false;
-	private String previousChatMessage;
+	//variables for client/server data
+	private boolean newOutput = false;
+	private String output;
+	
 	private User user;
 	
 	/**
@@ -272,8 +275,8 @@ public class BetGUI extends JFrame {
 					//chatArea.append(message);
 					
 					//change this variable to let the server know a new message is ready
-					newChatInput = true;
-					previousChatMessage = message;
+					output = "Chat#" + message;
+					newOutput = true;
 					
 					chatField.setText("");
 					revalidate();
@@ -455,9 +458,14 @@ public class BetGUI extends JFrame {
 				user.subtractPoints(points);
 				betTracker.addBet(user, points, betColor);
 				
+				//prepare the message to be sent over the server
+				output = "Bet#" + Utility.colorToString(betColor) + "#" + points; 
+				newOutput = true;
+				
+				
 				//update labels
 				updateUserLabel();
-				updatePointLabels(points);
+				//updatePointLabels(points); This now get updated by server/client calls
 				
 				revalidate();
 			}
@@ -465,9 +473,9 @@ public class BetGUI extends JFrame {
 	}
 	
 	
-	private void updatePointLabels(int points)
+	private void updatePointLabels(int points, BetColor color)
 	{
-		switch(betColor)
+		switch(color)
 		{
 		case RED:
 			redPoints += points;
@@ -505,7 +513,7 @@ public class BetGUI extends JFrame {
 	
 	public synchronized String getMessage()
 	{
-		while(!newChatInput)
+		while(!newOutput)
 		{
 			try
 			{
@@ -516,7 +524,13 @@ public class BetGUI extends JFrame {
 				e.printStackTrace();
 			}
 		}
-		newChatInput = false;
-		return previousChatMessage;
+		newOutput = false;
+		return output;
+	}
+	
+	public void recieveBet(BetColor color, int amt)
+	{
+		updatePointLabels(amt, color);
+		revalidate();
 	}
 }
