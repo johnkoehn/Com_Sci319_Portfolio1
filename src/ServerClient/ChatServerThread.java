@@ -27,7 +27,7 @@ public class ChatServerThread extends Thread
 			streamOut.flush();
 		} catch (IOException ioe)
 		{
-			System.out.println(ID + " ERROR sending: " + ioe.getMessage());
+			System.out.println(ioe.getMessage());
 			server.remove(ID);
 			stop();
 		}

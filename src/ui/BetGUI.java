@@ -269,7 +269,7 @@ public class BetGUI extends JFrame {
 				{
 					//get the entered text and append it to the text area
 					String message = username + ": " + chatField.getText() + "\n";
-					chatArea.append(message);
+					//chatArea.append(message);
 					
 					//change this variable to let the server know a new message is ready
 					newChatInput = true;
