@@ -6,6 +6,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import core.Utility;
 import ui.BetGUI;
 
 import java.awt.EventQueue;
@@ -69,7 +70,7 @@ public class ChatClient implements Runnable
 	
 	public synchronized void handleBet(String color, String amt)
 	{
-		// TODO Auto-generated method stub
+		frame.recieveBet(Utility.stringToColor(color), Integer.parseInt(amt));
 		
 	}
 
