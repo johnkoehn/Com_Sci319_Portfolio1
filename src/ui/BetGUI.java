@@ -39,8 +39,8 @@ import javax.swing.JScrollPane;
 public class BetGUI extends JFrame {
 
 	private JPanel contentPane;
+	private JTextArea chatArea;
 	private JTextField chatField;
-	private String username = "Anus Potato";
 	private BetTracker betTracker;
 	
 	private BetColor betColor = BetColor.NONE;
@@ -73,8 +73,9 @@ public class BetGUI extends JFrame {
 	private JPanel panel;
 	private Color red = new Color(165, 42, 42);
 	
-	//for testing
-	User user = new User(10000, username);
+	private boolean newChatInput = false;
+	private String previousChatMessage;
+	private User user;
 	
 	/**
 	 * Launch the application.
@@ -87,7 +88,7 @@ public class BetGUI extends JFrame {
 			{
 				try
 				{
-					BetGUI frame = new BetGUI();
+					BetGUI frame = new BetGUI("Anus Potato");
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -209,8 +210,9 @@ public class BetGUI extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public BetGUI() 
+	public BetGUI(String username) 
 	{
+		user = new User(10000, username);
 		betTracker = new BetTracker();
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -222,7 +224,7 @@ public class BetGUI extends JFrame {
 		
 		
 		//chatArea is where user chat takes place
-		JTextArea chatArea = new JTextArea();
+		chatArea = new JTextArea();
 		chatArea.setEditable(false);
 		chatArea.setBounds(-2, -1, 206, 281);
 		chatArea.setLineWrap(true);
@@ -267,7 +269,11 @@ public class BetGUI extends JFrame {
 				{
 					//get the entered text and append it to the text area
 					String message = username + ": " + chatField.getText() + "\n";
-					chatArea.append(message); //TODO, send the text to server/host
+					chatArea.append(message);
+					
+					//change this variable to let the server know a new message is ready
+					newChatInput = true;
+					previousChatMessage = message;
 					
 					chatField.setText("");
 					revalidate();
@@ -484,5 +490,27 @@ public class BetGUI extends JFrame {
 	private void updateUserLabel()
 	{
 		lblUsernamePoints.setText(user.getUsername() + ": " + user.getPoints());
+	}
+	
+	public void test()
+	{
+		System.out.println("Hello");
+	}
+	
+	public void sendMessage(String message)
+	{
+		chatArea.append(message);
+		revalidate();
+	}
+	
+	public boolean newMessage()
+	{
+		return newChatInput;
+	}
+	
+	public String getMessage()
+	{
+		newChatInput = false;
+		return previousChatMessage;
 	}
 }

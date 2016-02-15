@@ -1,6 +1,14 @@
 package ServerClient;
 
 import java.net.*;
+
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
+import ui.BetGUI;
+
+import java.awt.EventQueue;
 import java.io.*;
 
 public class ChatClient implements Runnable
@@ -10,21 +18,29 @@ public class ChatClient implements Runnable
 	private DataInputStream console = null;
 	private DataOutputStream streamOut = null;
 	private ChatClientThread client = null;
+	private String username;
+	private BetGUI frame;
 
 	public ChatClient(String serverName, int serverPort)
 	{
-		System.out.println("Establishing connection. Please wait ...");
+		//first open up a JDialog, asking the user for their name
+		username = JOptionPane.showInputDialog(new JFrame(), "Enter name: ");
+		
+		JDialog dialog = new JDialog(new JFrame(), "Establishing connection...");
+		dialog.setVisible(true);
 		try
 		{
 			socket = new Socket(serverName, serverPort);
-			System.out.println("Connected: " + socket);
+			dialog.setVisible(false);
 			start();
-		} catch (UnknownHostException uhe)
+		} catch (UnknownHostException h)
 		{
-			System.out.println("Host unknown: " + uhe.getMessage());
-		} catch (IOException ioe)
+			dialog.setVisible(false);
+			JOptionPane.showMessageDialog(new JFrame(), "Unknown Host " + h.getMessage());
+		} catch (IOException e)
 		{
-			System.out.println("Unexpected exception: " + ioe.getMessage());
+			dialog.setVisible(false);
+			JOptionPane.showMessageDialog(new JFrame(), "IO exception: " + e.getMessage());
 		}
 	}
 
@@ -34,7 +50,10 @@ public class ChatClient implements Runnable
 		{
 			try
 			{
-				streamOut.writeUTF(console.readLine());
+				while(!frame.newMessage()){}
+				
+				//we got a new message, notify the server and send the message
+				streamOut.writeUTF(frame.getMessage());
 				streamOut.flush();
 			} catch (IOException ioe)
 			{
@@ -46,16 +65,14 @@ public class ChatClient implements Runnable
 
 	public void handle(String msg)
 	{
-		if (msg.equals(".bye"))
-		{
-			System.out.println("Good bye. Press RETURN to exit ...");
-			stop();
-		} else
-			System.out.println(msg);
+		frame.sendMessage(msg);
 	}
 
 	public void start() throws IOException
 	{
+		frame = new BetGUI(username);
+		frame.setVisible(true);
+		
 		console = new DataInputStream(System.in);
 		streamOut = new DataOutputStream(socket.getOutputStream());
 		if (thread == null)
@@ -91,8 +108,17 @@ public class ChatClient implements Runnable
 
 	public static void main(String args[])
 	{
-		ChatClient client = null;
-
-		client = new ChatClient("localhost", 1222);
+		EventQueue.invokeLater(new Runnable() 
+		{
+			public void run() 
+			{
+				try
+				{
+					ChatClient client = new ChatClient("10.26.46.61", 1222);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 }
