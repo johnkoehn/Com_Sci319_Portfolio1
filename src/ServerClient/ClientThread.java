@@ -50,35 +50,30 @@ public class ClientThread extends Thread
 			try
 			{
 				String msg = streamIn.readUTF();
-				Boolean flag = false;
-				String color = null;
-				String amt = null;
 				Scanner parser = new Scanner(msg);
 				parser.useDelimiter("#");
-				while(parser.hasNext())
+				
+				String sub = parser.next();
+				if(sub.equals("Chat"))
 				{
-					String sub = parser.next();
-					if(sub.equals("Chat"))
-					{
-						msg = parser.next();
-						flag = true;
-					}
-					else
-					{
-						//equals Bet
-						color = parser.next();
-						amt = parser.next();
-					}
+					client.handleChat(msg.replaceFirst("Chat#", ""));
+				}
+				else if(sub.equals("Bet"))
+				{
+					//equals Bet
+					client.handleBet(parser.next(), parser.next());
+				}
+				else if(sub.equals("Roll"))
+				{
+					client.handleRoll(parser.next());
+				}
+				else if(sub.equals("Start"))
+				{
+					client.handleStart(parser.next(), parser.next());
 				}
 				
-				if(flag)
-				{
-					client.handleChat(msg);
-				}
-				else
-				{
-					client.handleBet(color, amt);
-				}
+				parser.close();
+				
 			} catch (IOException ioe)
 			{
 				System.out.println("Listening error: " + ioe.getMessage());

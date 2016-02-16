@@ -33,6 +33,8 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 
 import java.awt.Color;
+import java.awt.Dialog;
+
 import javax.swing.JProgressBar;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
@@ -59,7 +61,6 @@ public class BetGUI extends JFrame {
 	private JLabel lblRedPoints;
 	private JLabel lblGreenPoints;
 	private JLabel lblBlackPoints;
-	//TODO, these need values based of server
 	private int redPoints;  
 	private int greenPoints;
 	private int blackPoints;
@@ -68,16 +69,19 @@ public class BetGUI extends JFrame {
 	private JLabel lblPoints;
 	private JLabel lblTime;
 	
-	private boolean betting = true;
+	private boolean betting = false;
 	
 	private int cyclesSinceGreen = 0;
 	private JPanel panel;
 	private Color red = new Color(165, 42, 42);
 	
 	//variables for client/server data
-	private boolean newOutput = false;
+	private volatile boolean newOutput = false;
 	private String output;
-	
+	private volatile boolean recievedRoll = false;
+	private volatile boolean recievedStart = false;
+	private int roll = 0;
+	private volatile boolean firstStart = true;
 	private User user;
 	
 	/**
@@ -115,7 +119,12 @@ public class BetGUI extends JFrame {
         {
         	while(true)
         	{
-        		betting = true;
+        		//wait for new round
+        		while(!recievedStart) 
+        		{			
+        		}
+        		
+        		//new round start the timer
         		int time = 10;
                 int progress = 0;
                 progressBar.setValue(100);
@@ -135,19 +144,23 @@ public class BetGUI extends JFrame {
                     revalidate();
                 }
                 
-                //time is up to place bets, choose winning color and deal with bets
+                //time is up to place bets
                 betting = false;
+                recievedStart = false;
+                
+                //wait for server to send roll value
+                while(!recievedRoll)
+                {
+                }
                 gamble();
         	}
         }
 
     	private void gamble()
     	{
-    		Random random = new Random();
-    		int value = random.nextInt(44 - 30 + 1) + 30;
     		
     		//start displaying the colors
-    		for(int i=0; i < value; i++)
+    		for(int i=0; i < roll; i++)
     		{
     			if(gambleColor == BetColor.RED && cyclesSinceGreen >= 14)
     			{
@@ -181,6 +194,7 @@ public class BetGUI extends JFrame {
     		
     		//final color has been chosen, process the bets
     		processBets();
+    		recievedRoll = false;
     	}
         
     	private void processBets()
@@ -358,10 +372,10 @@ public class BetGUI extends JFrame {
 		
 		progressBar = new JProgressBar();
 		progressBar.setBounds(10, 264, 164, 14);
-		progressBar.setValue(90);
+		progressBar.setValue(100);
 		contentPane.add(progressBar);
 		
-		lblTime = new JLabel("30");
+		lblTime = new JLabel("10");
 		lblTime.setBounds(184, 264, 70, 18);
 		contentPane.add(lblTime);
 		
@@ -376,6 +390,30 @@ public class BetGUI extends JFrame {
 		
 		Task task = new Task();
 		task.execute();
+		
+		//Initialize a thread to tell the user they are waiting for client to sync with the server
+		Thread waiting = new Thread(new Runnable()
+		{
+			
+			@Override
+			public void run()
+			{
+				JDialog messageDialog = new JDialog(BetGUI.this, "Waiting to Sync");
+				messageDialog.setTitle("Waiting to Sync");
+				messageDialog.setSize(300, 150);
+				messageDialog.setLocationRelativeTo(BetGUI.this);
+				messageDialog.add(new JLabel("Waiting to sync with the server, please wait"));
+				//messageDialog.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+				messageDialog.setVisible(true);
+				
+				while(firstStart)
+				{
+				}
+				messageDialog.setVisible(false);
+				messageDialog.dispose();				
+			}
+		});
+		waiting.start();
 	}
 	
 	private void initColorButtonListener()
@@ -426,6 +464,7 @@ public class BetGUI extends JFrame {
 			{
 				if(betting == false)
 				{
+					JOptionPane.showMessageDialog(new JFrame(), "Can't Enter a bet until next round!");
 					return;
 				}
 				
@@ -515,14 +554,6 @@ public class BetGUI extends JFrame {
 	{
 		while(!newOutput)
 		{
-			try
-			{
-				Thread.sleep(1);
-			} catch (InterruptedException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
 		newOutput = false;
 		return output;
@@ -533,4 +564,43 @@ public class BetGUI extends JFrame {
 		updatePointLabels(amt, color);
 		revalidate();
 	}
+	
+	public void recieveStart(BetColor color, int cyclesSinceGreen)
+	{
+		gambleColor = color;
+		this.cyclesSinceGreen = cyclesSinceGreen;
+
+		
+		if(color == BetColor.RED)
+		{
+			panel.setBackground(red);
+		}
+		else if(color == BetColor.GREEN)
+		{
+			panel.setBackground(Color.GREEN);
+		}
+		else
+		{
+			panel.setBackground(Color.BLACK);
+		}
+		revalidate();
+		
+		if(firstStart)
+		{
+			firstStart = false;
+		}
+			
+		
+		recievedStart = true;
+		betting = true;
+	}
+	
+	public void recieveRoll(int value)
+	{
+		roll = value;
+		recievedRoll = true;
+	}
+	
+	
+	
 }

@@ -1,5 +1,7 @@
 package core;
 
+import java.awt.Color;
+
 public class Utility
 {
 	public static String colorToString(BetColor color)
@@ -36,5 +38,7 @@ public class Utility
 		
 		return BetColor.NONE;
 	}
+	
+
 
 }

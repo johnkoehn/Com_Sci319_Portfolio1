@@ -40,13 +40,13 @@ public class Client implements Runnable
 			dialog.setVisible(false);
 			dialog.dispose();
 			JOptionPane.showMessageDialog(new JFrame(), "Unknown Host " + h.getMessage());
-			return;
+			System.exit(1);
 		} catch (IOException e)
 		{
 			dialog.setVisible(false);
 			dialog.dispose();
 			JOptionPane.showMessageDialog(new JFrame(), "IO exception: " + e.getMessage());
-			return;
+			System.exit(1);
 		}
 	}
 
@@ -68,7 +68,7 @@ public class Client implements Runnable
 		}
 	}
 
-	public void handleChat(String msg)
+	public synchronized void handleChat(String msg)
 	{
 		EventQueue.invokeLater(new Runnable()
 		{
@@ -80,6 +80,36 @@ public class Client implements Runnable
 				
 			}
 		});
+	}
+	
+	public synchronized void handleRoll(String value)
+	{
+		EventQueue.invokeLater(new Runnable()
+		{
+			
+			@Override
+			public void run()
+			{
+				frame.recieveRoll(Integer.parseInt(value));
+				
+			}
+		});
+		
+	}
+	
+	public synchronized void handleStart(String color, String amt)
+	{
+		EventQueue.invokeLater(new Runnable()
+		{
+			
+			@Override
+			public void run()
+			{
+				frame.recieveStart(Utility.stringToColor(color), Integer.parseInt(amt));
+				
+			}
+		});
+		
 	}
 	
 	public synchronized void handleBet(String color, String amt)
@@ -129,19 +159,8 @@ public class Client implements Runnable
 				socket.close();
 			
 			//notify the user and then finish closing
-			JDialog dialog = new JDialog(new JFrame(), "Sever Connection down");
-			dialog.setVisible(true);
-			try
-			{
-				client.sleep(2000);
-				dialog.setVisible(false);;
-				dialog.dispose();
-			} catch (InterruptedException e)
-			{
-				dialog.setVisible(false);;
-				dialog.dispose();
-				e.printStackTrace();
-			}
+			JOptionPane.showMessageDialog(new JFrame(), "Server connection down! Closing program");
+			frame.dispose();
 		} catch (IOException ioe)
 		{
 			System.out.println("Error closing ...");
