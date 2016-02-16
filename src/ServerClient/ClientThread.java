@@ -4,13 +4,13 @@ import java.net.*;
 import java.util.Scanner;
 import java.io.*;
 
-public class ChatClientThread extends Thread
+public class ClientThread extends Thread
 {
 	private Socket socket;
-	private ChatClient client;
+	private Client client;
 	private DataInputStream streamIn;
 
-	public ChatClientThread(ChatClient client, Socket socket)
+	public ClientThread(Client client, Socket socket)
 	{
 		this.client = client;
 		this.socket = socket;

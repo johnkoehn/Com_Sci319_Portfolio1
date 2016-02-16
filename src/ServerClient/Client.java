@@ -12,17 +12,17 @@ import ui.BetGUI;
 import java.awt.EventQueue;
 import java.io.*;
 
-public class ChatClient implements Runnable
+public class Client implements Runnable
 {
 	private Socket socket = null;
 	private Thread thread = null;
 	private DataInputStream console = null;
 	private DataOutputStream streamOut = null;
-	private ChatClientThread client = null;
+	private ClientThread client = null;
 	private String username;
 	private BetGUI frame;
 
-	public ChatClient(String serverName, int serverPort)
+	public Client(String serverName, int serverPort)
 	{
 		//first open up a JDialog, asking the user for their name
 		username = JOptionPane.showInputDialog(new JFrame(), "Enter name: ");
@@ -33,15 +33,20 @@ public class ChatClient implements Runnable
 		{
 			socket = new Socket(serverName, serverPort);
 			dialog.setVisible(false);
+			dialog.dispose();
 			start();
 		} catch (UnknownHostException h)
 		{
 			dialog.setVisible(false);
+			dialog.dispose();
 			JOptionPane.showMessageDialog(new JFrame(), "Unknown Host " + h.getMessage());
+			return;
 		} catch (IOException e)
 		{
 			dialog.setVisible(false);
+			dialog.dispose();
 			JOptionPane.showMessageDialog(new JFrame(), "IO exception: " + e.getMessage());
+			return;
 		}
 	}
 
@@ -65,12 +70,30 @@ public class ChatClient implements Runnable
 
 	public void handleChat(String msg)
 	{
-		frame.sendMessage(msg);
+		EventQueue.invokeLater(new Runnable()
+		{
+			
+			@Override
+			public void run()
+			{
+				frame.recieveMessage(msg);
+				
+			}
+		});
 	}
 	
 	public synchronized void handleBet(String color, String amt)
 	{
-		frame.recieveBet(Utility.stringToColor(color), Integer.parseInt(amt));
+		EventQueue.invokeLater(new Runnable()
+		{
+			
+			@Override
+			public void run()
+			{
+				frame.recieveBet(Utility.stringToColor(color), Integer.parseInt(amt));
+				
+			}
+		});
 		
 	}
 
@@ -83,7 +106,7 @@ public class ChatClient implements Runnable
 		streamOut = new DataOutputStream(socket.getOutputStream());
 		if (thread == null)
 		{
-			client = new ChatClientThread(this, socket);
+			client = new ClientThread(this, socket);
 			thread = new Thread(this);
 			thread.start();
 		}
@@ -104,6 +127,21 @@ public class ChatClient implements Runnable
 				streamOut.close();
 			if (socket != null)
 				socket.close();
+			
+			//notify the user and then finish closing
+			JDialog dialog = new JDialog(new JFrame(), "Sever Connection down");
+			dialog.setVisible(true);
+			try
+			{
+				client.sleep(2000);
+				dialog.setVisible(false);;
+				dialog.dispose();
+			} catch (InterruptedException e)
+			{
+				dialog.setVisible(false);;
+				dialog.dispose();
+				e.printStackTrace();
+			}
 		} catch (IOException ioe)
 		{
 			System.out.println("Error closing ...");
@@ -120,7 +158,7 @@ public class ChatClient implements Runnable
 			{
 				try
 				{
-					ChatClient client = new ChatClient("10.26.46.61", 1222);
+					Client client = new Client("localhost", 1222);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

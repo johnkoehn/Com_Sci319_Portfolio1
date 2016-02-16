@@ -1,19 +1,19 @@
 package ServerClient;
 
 import java.net.*;
+import java.util.ArrayList;
 
 import core.BetColor;
 
 import java.io.*;
 
-public class ChatServer implements Runnable
+public class Server implements Runnable
 {
-	private ChatServerThread chatClients[] = new ChatServerThread[10];
+	private ArrayList<ServerThread> clients = new ArrayList<ServerThread>();
 	private ServerSocket server = null;
 	private Thread thread = null;
-	private int clientCount = 0;
 
-	public ChatServer(int port)
+	public Server(int port)
 	{
 		try
 		{
@@ -63,17 +63,22 @@ public class ChatServer implements Runnable
 
 	private int findClient(int ID)
 	{
-		for (int i = 0; i < clientCount; i++)
-			if (chatClients[i].getID() == ID)
-				return i;
+		int pos = 0;
+		for (ServerThread thread : clients)
+		{
+			if (thread.getID() == ID)
+				return pos;
+			pos += 1;
+		}
+
 		return -1;
 	}
 
 	public synchronized void handle(String input)
 	{
 
-		for (int i = 0; i < clientCount; i++)
-			chatClients[i].sendMessage(input);
+		for (ServerThread thread : clients)
+			thread.sendMessage(input);
 	}
 
 	public synchronized void remove(int ID)
@@ -81,12 +86,11 @@ public class ChatServer implements Runnable
 		int pos = findClient(ID);
 		if (pos >= 0)
 		{
-			ChatServerThread toTerminate = chatClients[pos];
-			System.out.println("Removing client thread " + ID + " at " + pos);
-			if (pos < clientCount - 1)
-				for (int i = pos + 1; i < clientCount; i++)
-					chatClients[i - 1] = chatClients[i];
-			clientCount--;
+			//get the serverthread, remove it from the array and then terminate it
+			ServerThread toTerminate = clients.get(pos);
+			System.out.println("Removing client thread " + ID);
+			clients.remove(pos);
+			
 			try
 			{
 				toTerminate.close();
@@ -100,26 +104,23 @@ public class ChatServer implements Runnable
 
 	private void addThread(Socket socket)
 	{
-		if (clientCount < chatClients.length)
+		System.out.println("New Client at " + socket);
+		ServerThread newClient = new ServerThread(this, socket);
+		clients.add(newClient);
+		
+		try
 		{
-			System.out.println("Client accepted: " + socket);
-			chatClients[clientCount] = new ChatServerThread(this, socket);
-			try
-			{
-				chatClients[clientCount].open();
-				chatClients[clientCount].start();
-				clientCount++;
-			} catch (IOException ioe)
-			{
-				System.out.println("Error opening thread: " + ioe);
-			}
-		} else
-			System.out.println("Client refused: maximum " + chatClients.length + " reached.");
+			newClient.open();
+			newClient.start();
+		} catch (IOException ioe)
+		{
+			System.out.println("Error opening thread: " + ioe);
+		}
 	}
 
 	public static void main(String args[])
 	{
-		ChatServer server = null;
-		server = new ChatServer(1222);
+		Server server = null;
+		server = new Server(1222);
 	}
 }

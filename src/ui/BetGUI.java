@@ -505,7 +505,7 @@ public class BetGUI extends JFrame {
 		System.out.println("Hello");
 	}
 	
-	public void sendMessage(String message)
+	public void recieveMessage(String message)
 	{
 		chatArea.append(message);
 		revalidate();
