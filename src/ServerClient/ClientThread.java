@@ -78,6 +78,7 @@ public class ClientThread extends Thread
 			{
 				System.out.println("Listening error: " + ioe.getMessage());
 				client.stop();
+				System.exit(1);
 			}
 		}
 	}

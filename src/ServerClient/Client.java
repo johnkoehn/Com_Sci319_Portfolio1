@@ -16,7 +16,6 @@ public class Client implements Runnable
 {
 	private Socket socket = null;
 	private Thread thread = null;
-	private DataInputStream console = null;
 	private DataOutputStream streamOut = null;
 	private ClientThread client = null;
 	private String username;
@@ -132,7 +131,6 @@ public class Client implements Runnable
 		frame = new BetGUI(username);
 		frame.setVisible(true);
 		
-		console = new DataInputStream(System.in);
 		streamOut = new DataOutputStream(socket.getOutputStream());
 		if (thread == null)
 		{
@@ -151,8 +149,6 @@ public class Client implements Runnable
 		}
 		try
 		{
-			if (console != null)
-				console.close();
 			if (streamOut != null)
 				streamOut.close();
 			if (socket != null)
@@ -161,12 +157,11 @@ public class Client implements Runnable
 			//notify the user and then finish closing
 			JOptionPane.showMessageDialog(new JFrame(), "Server connection down! Closing program");
 			frame.dispose();
+			System.exit(1);
 		} catch (IOException ioe)
 		{
 			System.out.println("Error closing ...");
 		}
-		client.close();
-		client.stop();
 	}
 
 	public static void main(String args[])
@@ -177,7 +172,7 @@ public class Client implements Runnable
 			{
 				try
 				{
-					Client client = new Client("localhost", 1222);
+					Client client = new Client("10.26.42.198", 1222);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

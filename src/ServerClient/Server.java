@@ -77,7 +77,7 @@ public class Server implements Runnable
 					while(true)
 					{
 						canBet = true;
-						time = 10;
+						time = 15;
 						try
 						{
 							while(time > 0)

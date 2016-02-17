@@ -125,12 +125,10 @@ public class BetGUI extends JFrame {
         		}
         		
         		//new round start the timer
-        		int time = 10;
-                int progress = 0;
+        		int time = 15;
+                double progress = 0;
                 progressBar.setValue(100);
-                //Initialize progress property.
-                setProgress(0);
-                while (progress < 100) 
+                while (progress < 150) 
                 {
                     //Sleep for up to one second.
                     try 
@@ -139,7 +137,7 @@ public class BetGUI extends JFrame {
                     } catch (InterruptedException ignore) {}
                    
                     progress += 1;
-                    progressBar.setValue(100 - progress);
+                    progressBar.setValue((int)(100 - progress*.666));
                     lblTime.setText("" + (int)(time - progress*.1));
                     revalidate();
                 }
@@ -335,19 +333,19 @@ public class BetGUI extends JFrame {
 		lblPoints.setBounds(10, 302, 57, 18);
 		contentPane.add(lblPoints);
 		
-		btnRed = new JButton("");
+		btnRed = new JButton("1:2");
 		btnRed.setBackground(red);
 		btnRed.setForeground(Color.GRAY);
 		btnRed.setBounds(10, 69, 89, 23);
 		contentPane.add(btnRed);
 		
-		btnGreen = new JButton("");
+		btnGreen = new JButton("1:14");
 		btnGreen.setBounds(109, 69, 89, 23);
 		btnGreen.setBackground(Color.GREEN);
 		btnGreen.setForeground(Color.GRAY);
 		contentPane.add(btnGreen);
 		
-		btnBlack = new JButton("");
+		btnBlack = new JButton("1:2");
 		btnBlack.setBackground(Color.BLACK);
 		btnBlack.setForeground(Color.GRAY);
 		btnBlack.setBounds(208, 69, 89, 23);
@@ -375,7 +373,7 @@ public class BetGUI extends JFrame {
 		progressBar.setValue(100);
 		contentPane.add(progressBar);
 		
-		lblTime = new JLabel("10");
+		lblTime = new JLabel("15");
 		lblTime.setBounds(184, 264, 70, 18);
 		contentPane.add(lblTime);
 		
@@ -402,7 +400,7 @@ public class BetGUI extends JFrame {
 				messageDialog.setTitle("Waiting to Sync");
 				messageDialog.setSize(300, 150);
 				messageDialog.setLocationRelativeTo(BetGUI.this);
-				messageDialog.add(new JLabel("Waiting to sync with the server, please wait"));
+				messageDialog.add(new JLabel("Waiting for next round"));
 				//messageDialog.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 				messageDialog.setVisible(true);
 				
