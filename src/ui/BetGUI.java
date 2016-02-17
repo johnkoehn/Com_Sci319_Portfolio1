@@ -122,6 +122,15 @@ public class BetGUI extends JFrame {
         		//wait for new round
         		while(!recievedStart) 
         		{			
+        			try
+					{
+						Thread.sleep(5);
+					} catch (InterruptedException e)
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+        			
         		}
         		
         		//new round start the timer
@@ -552,6 +561,14 @@ public class BetGUI extends JFrame {
 	{
 		while(!newOutput)
 		{
+			try
+			{
+				Thread.sleep(5);
+			} catch (InterruptedException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		newOutput = false;
 		return output;
