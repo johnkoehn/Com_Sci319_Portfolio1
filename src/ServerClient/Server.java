@@ -100,7 +100,7 @@ public class Server implements Runnable
 							blackPoints = 0;
 							
 							//calculate amount of time to wait
-							int waitTime = 500;
+							int waitTime = 1200;
 							for(int i = 0; i < value; i++)
 							{
 								waitTime += 100 + i*10;
