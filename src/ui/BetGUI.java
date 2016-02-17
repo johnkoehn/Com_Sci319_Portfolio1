@@ -148,7 +148,18 @@ public class BetGUI extends JFrame {
                     progress += 1;
                     progressBar.setValue((int)(100 - progress*.666));
                     lblTime.setText("" + (int)(time - progress*.1));
-                    revalidate();
+                    
+                    EventQueue.invokeLater(new Runnable()
+					{
+						
+						@Override
+						public void run()
+						{
+							revalidate();
+							
+						}
+					});
+                    
                 }
                 
                 //time is up to place bets
@@ -191,7 +202,14 @@ public class BetGUI extends JFrame {
     				cyclesSinceGreen += 1;
     			}
     			
-    			revalidate();
+    			EventQueue.invokeLater(new Runnable()
+				{
+					public void run()
+					{
+						revalidate();
+					}
+				});
+    			
     			
                 try 
                 {
@@ -218,7 +236,18 @@ public class BetGUI extends JFrame {
     		
     		//update user points 
     		updateUserLabel();
-    		revalidate();
+    		
+    		EventQueue.invokeLater(new Runnable()
+			{
+				
+				@Override
+				public void run()
+				{
+					revalidate();
+					
+				}
+			});
+    		
     		
     	}
     	
@@ -561,8 +590,14 @@ public class BetGUI extends JFrame {
 	
 	public void recieveMessage(String message)
 	{
-		chatArea.append(message);
-		revalidate();
+		EventQueue.invokeLater(new Runnable()
+		{
+			public void run()
+			{
+				chatArea.append(message);
+				revalidate();
+			}
+		});
 	}
 	
 	public synchronized String getMessage()
@@ -584,8 +619,18 @@ public class BetGUI extends JFrame {
 	
 	public void recieveBet(BetColor color, int amt)
 	{
-		updatePointLabels(amt, color);
-		revalidate();
+		EventQueue.invokeLater(new Runnable()
+		{
+			
+			@Override
+			public void run()
+			{
+				updatePointLabels(amt, color);
+				revalidate();
+				
+			}
+		});
+
 	}
 	
 	public void recieveStart(BetColor color, int cyclesSinceGreen)
@@ -606,7 +651,18 @@ public class BetGUI extends JFrame {
 		{
 			panel.setBackground(Color.BLACK);
 		}
-		revalidate();
+		
+		EventQueue.invokeLater(new Runnable()
+		{
+			
+			@Override
+			public void run()
+			{
+				revalidate();
+				
+			}
+		});
+		
 		
 		if(firstStart)
 		{

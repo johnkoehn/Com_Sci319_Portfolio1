@@ -69,60 +69,25 @@ public class Client implements Runnable
 
 	public synchronized void handleChat(String msg)
 	{
-		EventQueue.invokeLater(new Runnable()
-		{
-			
-			@Override
-			public void run()
-			{
-				frame.recieveMessage(msg);
-				
-			}
-		});
+		frame.recieveMessage(msg);
 	}
 	
 	public synchronized void handleRoll(String value)
 	{
-		EventQueue.invokeLater(new Runnable()
-		{
-			
-			@Override
-			public void run()
-			{
-				frame.recieveRoll(Integer.parseInt(value));
-				
-			}
-		});
+		frame.recieveRoll(Integer.parseInt(value));
 		
 	}
 	
 	public synchronized void handleStart(String color, String amt)
 	{
-		EventQueue.invokeLater(new Runnable()
-		{
-			
-			@Override
-			public void run()
-			{
-				frame.recieveStart(Utility.stringToColor(color), Integer.parseInt(amt));
-				
-			}
-		});
+		frame.recieveStart(Utility.stringToColor(color), Integer.parseInt(amt));
 		
 	}
 	
 	public synchronized void handleBet(String color, String amt)
 	{
-		EventQueue.invokeLater(new Runnable()
-		{
-			
-			@Override
-			public void run()
-			{
-				frame.recieveBet(Utility.stringToColor(color), Integer.parseInt(amt));
-				
-			}
-		});
+
+		frame.recieveBet(Utility.stringToColor(color), Integer.parseInt(amt));
 		
 	}
 
