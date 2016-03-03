@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script src="code.js">
+
+</script>
+
+<style>
+#panel 
+{
+	padding: 50px;
+	display: none;
+	background-color: pink;
+}
+
+#panel2
+{
+	padding: 50px;
+	background-color: blue;
+}
+</style>
+</head>
+<body>
+
+<!-- Html Element: p id: p1 effect: hide() event: click -->
+<p id="p1">If you click on me, I will disappear.</p>
+
+<!-- Html Element: p id: p3 effect: hide() event: dblclick -->
+<p id="p3">If you double click on me I will disappear.</p> 
+
+<!-- Html Element: p id: p4 event: hover -->
+<p id="p4">Hover over me!</p> 
+
+<!-- Html Element: input id: text event: focus and blur -->
+<p id="p5">Name: <input id="text" name="fullname">
+</p> 
+
+<button id="button2"> Click on me to show hidden text! </button><br>
+
+<!-- Html Element: p id: p2 effect: show() -->
+<p id="p2" style="display:none"> This is hidden! </p>
+
+<button id="button1">Click to fade in boxes</button><br><br>
+
+<!-- Html Element: div id: div1 effect: fadeIn(1000) -->
+<div id="div1" style="width:80px;height:80px;display:none;background-color:red;"></div><br>
+
+<button id="button3">Click to fade out box</button><br><br>
+
+<!-- Html Element: div id: div1 effect: fadeOut(1000) -->
+<div id="div2" style="width:80px;height:80px;background-color:green;"></div><br>
+
+<button id="button4"> Click to move panel down/up</button><br><br>
+
+<!-- Html Element: div id: panel effect: slideToggle() -->
+<div id="panel">Hello world!</div><br>
+
+<!-- Html Element: div id: panel2 CSS Changes: 'background-color': 'green', 'font-size': '40px', 'font-weight': 'bold', 'color' : 'orange', 'padding': '75px' -->
+<div id="panel2">CSS Change panel, click me to change five different style elements!</div>
+
+
+
+
+
+</body>
+</html>
