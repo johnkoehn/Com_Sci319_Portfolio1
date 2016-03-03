@@ -1,7 +1,20 @@
 function Library()
 {
-	this.books1 = [new Book("test1", false), new Book("test2", true)];
-	this.shelf1 = new Shelf("Shelf1", "test", 5);
+	var books1 = [new Book("book1", false), new Book("book1", true), new Book("book2", true), new Book("book3", true), new Book("book3", true), new Book("book4", false), new Book("book4", true), new Book("book4", true), new Book("book5", false), new Book("book1", true)];
+	var books2 = [new Book("book1", false), new Book("book1", true), new Book("book2", true), new Book("book3", true), new Book("book3", true), new Book("book4", false), new Book("book4", true), new Book("book4", true), new Book("book5", false), new Book("book1", true)];
+	var books3 = [new Book("book1", false), new Book("book1", true), new Book("book2", true), new Book("book3", true), new Book("book3", true), new Book("book4", false), new Book("book4", true), new Book("book4", true), new Book("book5", false), new Book("book1", true)];
+	this.shelfs = [new Shelf("Shelf1", books1, 10), new Shelf("Shelf2", books2, 10), new Shelf("Shelf3", books3, 10)];
+	
+	this.getShelfs = function()
+	{
+		return  this.shelfs;
+	};
+	
+	this.getBook = function(bookName)
+	{
+		
+	};
+	
 }
 
 

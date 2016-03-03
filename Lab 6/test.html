@@ -6,8 +6,10 @@
 
 <script>
 var lib = new Library();
-console.log(lib.shelf1.shelfName);
-console.log(lib.books1[0].bookName)
+
+var shelfs = lib.getShelfs();
+console.log(shelfs[0].books[0].bookName);
+
 </script>
 
 </head>
