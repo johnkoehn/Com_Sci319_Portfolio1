@@ -5,11 +5,6 @@ function Library()
 	var books3 = [new Book("book1", false), new Book("book1", true), new Book("book2", true), new Book("book3", true), new Book("book3", true), new Book("book4", false), new Book("book4", true), new Book("book4", true), new Book("book5", false), new Book("book1", true)];
 	this.shelfs = [new Shelf("Shelf1", books1, 10), new Shelf("Shelf2", books2, 10), new Shelf("Shelf3", books3, 10)];
 	
-	this.getBook = function(bookName)
-	{
-		
-	};
-	
 }
 
 Library.prototype.getShelfs = function() 
