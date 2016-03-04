@@ -12,9 +12,21 @@ Library.prototype.getShelfs = function()
 	return  this.shelfs;
 }
 
-Library.prototype.isBorrowed(book) = function()
+Library.prototype.isBorrowed = function(bookName)
 {
-	
+	//we need to find a book with the same name and than see if it is available
+	for(i = 0; i < shelfs.length; i++)
+	{
+		for(j = 0; j < shelfs[i].books.length; j++)
+		{
+			if(shelfs[i].books[j].bookName == bookName)
+			{
+				return shelfs[i];
+			}
+		}
+		
+	}
+	return false;
 }
 
 Library.prototype.display = function()
