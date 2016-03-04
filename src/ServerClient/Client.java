@@ -137,7 +137,7 @@ public class Client implements Runnable
 			{
 				try
 				{
-					Client client = new Client("10.26.42.198", 1222);
+					Client client = new Client("localhost", 1222);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
