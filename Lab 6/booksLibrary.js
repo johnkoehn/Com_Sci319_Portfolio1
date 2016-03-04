@@ -26,7 +26,7 @@ Library.prototype.isBorrowed = function(bookName)
 		}
 		
 	}
-	return false;
+	return null;
 }
 
 Library.prototype.display = function()
@@ -52,7 +52,7 @@ Library.prototype.display = function()
 			if(i >= shelfs[j].books.length)
 				s += "<td></td>";
 			else
-				s += "<td id = \"book\">" + shelfs[j].books[i].bookName + "</td>";
+				s += "<td class=\"book\" id = \"book\"" + j + i + ">" + shelfs[j].books[i].bookName + "</td>";
 		}
 		s += "</tr>";
 	}
@@ -73,4 +73,27 @@ function Book(bookName, available)
 	this.bookName = bookName;
 	this.available = available;
 }
+
+$(document).ready(function()
+{
+	$('.book').click(function()
+	{
+		var text = $(this).text();
+		var shelf = lib.isBorrowed(text);
+		
+		if(shelf != null)
+		{
+			alert("Book " + text + " is available at shelf " + shelf.shelfName);
+		}
+		else
+		{
+			alert("Book " + text + " is not available (all copies checked out)");
+		}
+	});
+});
+
+
+
+
+
 
