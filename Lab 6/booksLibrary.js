@@ -12,14 +12,33 @@ Library.prototype.getShelfs = function()
 	return  this.shelfs;
 }
 
-Library.prototype.isBorrowed(book) = function()
+Library.prototype.isBorrowed = function(book)
 {
 	
 }
 
 Library.prototype.display = function()
 {
+	var books = 0;
+	var s;
 	
+	for(var i = 0; i < shelfs.length; ++i)
+	{
+		if(shelfs[i].size > books)
+			books = shelfs[i].size;
+	}
+	s = "<table id=\"myTable\" border=3 width = 300px height = 500px>"
+	for(var i = 0; i < books; ++i)
+	{
+		s += "<tr>";
+		for(var j = 0; j < shelfs.length; ++j)
+		{
+			s += "<td>" + shelfs[j].books[i].bookName + "</td>";
+		}
+		s += "</tr>";
+	}
+	s += "</table>";
+	return s;
 }
 
 
@@ -35,3 +54,4 @@ function Book(bookName, available)
 	this.bookName = bookName;
 	this.available = available;
 }
+
