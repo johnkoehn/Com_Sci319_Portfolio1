@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
 <script src="booksLibrary.js"> 
 </script>
 
@@ -8,7 +9,6 @@
 var lib = new Library();
 
 var shelfs = lib.getShelfs();
-lib.display();
 console.log(shelfs[0].books[0].bookName);
 console.log(lib.isBorrowed("book1"));
 
@@ -16,7 +16,11 @@ console.log(lib.isBorrowed("book1"));
 
 </head>
 <body>
-<div id="myCalc">
+<div id="table">
 </div>
+<script>
+$('#table').html(lib.display);
+
+</script>
 </body>
 </html>
