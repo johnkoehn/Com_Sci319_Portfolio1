@@ -15,9 +15,9 @@ Library.prototype.getShelfs = function()
 Library.prototype.isBorrowed = function(bookName)
 {
 	//we need to find a book with the same name and than see if it is available
-	for(i = 0; i < shelfs.length; i++)
+	for(var i = 0; i < shelfs.length; i++)
 	{
-		for(j = 0; j < shelfs[i].books.length; j++)
+		for(var j = 0; j < shelfs[i].books.length; j++)
 		{
 			if(shelfs[i].books[j].bookName == bookName)
 			{
